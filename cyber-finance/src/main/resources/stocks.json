@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Apple",
+    "ticker": "AAPL",
+    "currency": "USD",
+    "category": "Tech"
+  },
+  {
+    "name": "Alphabet Class A",
+    "ticker": "GOOGL",
+    "currency": "USD",
+    "category": "Tech"
+  },
+  {
+    "name": "Vanguard S&P 500 ETF",
+    "ticker": "VOO",
+    "currency": "USD",
+    "category": "ETF"
+  },
+  {
+    "name": "Invesco QQQ Trust",
+    "ticker": "QQQ",
+    "currency": "USD",
+    "category": "ETF"
+  },
+  {
+    "name": "NVIDIA",
+    "ticker": "NVDA",
+    "currency": "USD",
+    "category": "Tech"
+  },
+  {
+    "name": "Tesla",
+    "ticker": "TSLA",
+    "currency": "USD",
+    "category": "Auto"
+  }
+]

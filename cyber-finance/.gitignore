@@ -1,0 +1,74 @@
+### 빌드 결과물 및 임시 파일 ##
+
+target/
+build/
+out/
+bin/
+/nbbuild/
+/dist/
+/nbdist/
+*.tmp
+.temp
+.fuse_hidden
+HELP.md
+
+### Maven 래퍼 ###
+
+.mvn/wrapper/maven-wrapper.jar
+
+### 보안 및 설정 (중요) ###
+
+# API 키나 비밀번호가 포함된 파일은 깃에 올리지 않습니다.
+
+application.properties
+application.yml
+.env
+*.key
+*.p12
+*.jks
+
+### 데이터베이스 (H2) ##
+
+*.mv.db
+*.trace.db
+.h2.server.properties
+
+### IDE 및 에디터 설정 ##
+
+# IntelliJ IDEA
+
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# VS Code
+
+.vscode/
+.history/
+*.code-workspace
+
+# STS / Eclipse
+
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# NetBeans
+
+/nbproject/private/
+/.nb-gradle/
+
+## 운영체제 관련 ###
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### 로그 ###
+
+*.log

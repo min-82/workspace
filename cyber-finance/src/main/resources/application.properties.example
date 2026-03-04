@@ -1,0 +1,3 @@
+# application.properties.example 내용
+api.stock.key=AGSZIHW8AREEX5J7
+server.port=8080
