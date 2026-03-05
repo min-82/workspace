@@ -1,4 +1,10 @@
-Cyber Finance (주식 시세 및 포트폴리오 관리 시스템)
+💹 Cyber Finance
+
+Spring Boot 기반 실시간 주식 시세 조회 및 포트폴리오 관리 시스템
+
+👋 Hello there!
+
+I am a student developer currently on a learning level. As I am still in the early stages of my career, I may have some mistakes or areas for improvement. Any constructive feedback or suggestions would be greatly appreciated! Thank you for looking at my project.
 
 Spring Boot와 외부 API를 연동하여 주식 마스터 데이터를 관리하고 실시간 시세를 조회하는 백엔드 애플리케이션입니다.
 
