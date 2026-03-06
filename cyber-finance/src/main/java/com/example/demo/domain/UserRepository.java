@@ -1,8 +1,11 @@
 package com.example.demo.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    // 나중에 로그인을 위해 아이디(username)로 유저를 찾는 기능입니다.
-    User findByUsername(String username);
+    // 유저네임 중복 확인을 위한 메서드
+    boolean existsByUsername(String username);
+    
+    Optional<User> findByUsername(String username);
 }

@@ -14,16 +14,14 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 고유 ID (자동 생성)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 고유 ID 자동 생성
+    private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String username; // 유저 이름 (아이디 역할)
+    @Column(unique = true, nullable = false) // 중복 방지를 위해 DB 레벨에서도 유니크 제약 추가
+    private String username;
 
     @Column(nullable = false)
-    private String password; // 비밀번호
-
-    // 생성자 (처음 가입할 때 사용)
+    private String password;
     public User(String username, String password) {
         this.username = username;
         this.password = password;
