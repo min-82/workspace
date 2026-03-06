@@ -1,69 +1,111 @@
-💹 Cyber Finance
-
-Spring Boot 기반 실시간 주식 시세 조회 및 포트폴리오 관리 시스템
+# 💹 Cyber-Finance
+> **Spring Boot 기반 실시간 주식 시세 조회 및 포트폴리오 관리 시스템**
 
 👋 Hello there!
 
 I am a student developer currently on a learning level. As I am still in the early stages of my career, I may have some mistakes or areas for improvement. Any constructive feedback or suggestions would be greatly appreciated! Thank you for looking at my project.
 
-Spring Boot와 외부 API를 연동하여 주식 마스터 데이터를 관리하고 실시간 시세를 조회하는 백엔드 애플리케이션입니다.
+![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=flat-square&logo=springboot)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-Auth-blue?style=flat-square&logo=springsecurity)
 
-🛠 기술 스택
+## 👋 Project Overview
+안녕하세요! 배움을 즐기는 **컴퓨터공학과 2학년** 개발자입니다. 
+`Cyber-Finance`는 외부 금융 API를 연동하여 실시간 주식 데이터를 처리하고, 사용자별 포트폴리오를 관리하는 백엔드 시스템입니다. 단순한 기능 구현을 넘어 **보안(Security)**과 **데이터 정규화**를 고려하여 설계되었습니다.
 
-Language: Java 17
+---
 
-Framework: Spring Boot 3.x
+## 🛠 Tech Stack
 
-Database: H2 Database (In-Memory/File)
+| Category | Technology |
+| :--- | :--- |
+| **Language** | Java 17 |
+| **Framework** | Spring Boot 3.x, Spring Security |
+| **Build Tool** | Maven (./mvnw) |
+| **Database** | H2 Database (File-based Persistence) |
+| **ORM** | Spring Data JPA (Hibernate 7.x) |
+| **API Docs** | Swagger / OpenAPI 3.0 |
+| **External API** | Alpha Vantage API, ExchangeRate-API |
 
-ORM: Spring Data JPA
+---
 
-External API: Alpha Vantage API
+## ✨ Key Features
 
-Environment: WSL2 (Ubuntu 22.04), VS Code
+### 1. 보안 및 회원 관리 (Security & User)
+* **BCrypt 암호화**: `BCryptPasswordEncoder`를 사용하여 사용자 비밀번호를 안전하게 해싱하여 저장합니다.
+* **세션 기반 인증**: Spring Security와 `HttpSession`을 연동하여 로그인 상태를 유지하고 권한을 검증합니다.
+* **CSRF 방어 설정**: API 환경에 최적화된 보안 설정을 적용하였습니다.
 
-✨ 주요 기능
+### 2. 주식 및 데이터 관리 (Market Data)
+* **마스터 데이터 동기화**: 서버 기동 시 `stocks.json`을 파싱하여 DB(`StockMaster`)에 자동 업데이트합니다.
+* **실시간 시세 조회**: Alpha Vantage API를 연동하여 미국 주식의 최신 가격을 가져옵니다.
+* **환율 자동 변환**: 외부 환율 API를 통해 `USD` 데이터를 실시간 `KRW` 가격으로 변환하여 제공합니다.
 
-주식 마스터 데이터 관리: 서버 기동 시 stocks.json을 읽어 DB(StockMaster)에 자동 동기화
+### 3. 실무형 아키텍처 (Architecture)
+* **데이터 정규화**: 주식 정보(Master)와 사용자의 보유 정보(Portfolio)를 분리하여 데이터 무결성을 보장합니다.
+* **Swagger API 문서화**: 모든 API 엔드포인트를 시각적으로 확인하고 테스트할 수 있는 환경을 구축했습니다.
 
-실시간 시세 조회: Alpha Vantage API를 연동하여 미국 주식 실시간 가격 조회
+---
 
-환율 적용: USD 데이터를 서버 내부 설정된 환율에 따라 KRW로 변환하여 제공
+## 🚀 Getting Started
 
-회원 관리: 사용자 가입 및 로그인 기능
+### Prerequisites
+* Java 17 이상
+* Alpha Vantage API Key ([무료 발급받기](https://www.alphavantage.co/support/#api-key))
 
-데이터 정규화: 주식 정보(Master)와 사용자 보유 정보(Portfolio)를 분리한 실무형 아키텍처
+### Configuration (`src/main/resources/application.properties`)
+보안을 위해 API 키는 외부 설정을 통해 관리합니다.
 
-🚀 실행 방법
+```properties
+# Database Configuration
+spring.datasource.url=jdbc:h2:file:./data/cyberfinance
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
 
-프로젝트 클론
+# Hibernate settings
+spring.jpa.hibernate.ddl-auto=update
 
-src/main/resources/application.properties 파일 생성 및 설정 (API Key 등)
+# External API Key (예시)
+app.api.alpha-vantage.key=YOUR_API_KEY_HERE
+```
 
-빌드 및 실행
-
+### Execution
+```bash
 ./mvnw clean spring-boot:run
+```
 
+---
 
-⚙️ 설정 (Configuration)
-
-보안을 위해 API Key는 코드에 직접 포함하지 않고 외부 설정을 통해 관리합니다.
-
-MarketDataService.java 내의 apiKey 변수에 발급받은 Alpha Vantage API 키를 입력해야 합니다.
-
-(향후 개선 예정: 환경 변수 또는 application-local.properties로 분리)
-
-📁 프로젝트 구조
-
+## 📁 Project Structure
+```text
 src/main/java/com/example/demo/
-├── controller/     # API 엔드포인트 (Stock, User)
-├── service/        # 비즈니스 로직 (MarketData, Stock, User)
-├── domain/         # Entity 및 Repository (Database)
-└── dto/            # 데이터 전송 객체 (Response/Request)
+├── config/         # Security, Swagger 관련 설정 클래스
+├── controller/     # API 엔드포인트 정의 (Stock, User)
+├── service/        # 비즈니스 로직 및 외부 API 연동
+├── domain/         # Entity 클래스 및 Repository 인터페이스
+└── dto/            # 데이터 전송 객체 (Request/Response)
+```
 
+---
 
-⚠️ 주의 사항
+## 🔍 API Documentation (Swagger)
+서버 실행 후 아래 주소에서 API를 직접 테스트해 볼 수 있습니다.
+* **Swagger UI**: `http://localhost:8080/swagger-ui/index.html`
+* **H2 Console**: `http://localhost:8080/h2-console`
+  * JDBC URL: `jdbc:h2:file:./data/cyberfinance`
+  * User Name: `sa` / Password: (없음)
 
-API 제한: Alpha Vantage 무료 키는 1분당 5회, 1초당 1회의 호출 제한이 있습니다.
+---
 
-데이터 부재: 한국 주식(.KS)의 경우 무료 플랜에서 데이터가 누락될 수 있어 미국 주식 위주로 구성되어 있습니다.
+## 🛠 Troubleshooting: Spring Security 6 Session Issue
+프로젝트 개발 중, 로그인을 성공했음에도 불구하고 다음 API 요청 시 `403 Forbidden` 에러가 발생하는 이슈를 겪었습니다.
+
+* **원인**: Spring Security 6(Spring Boot 3)부터는 수동 로그인 시 `SecurityContextHolder`에 인증 정보를 넣는 것만으로는 부족하며, 이를 세션 저장소(`SecurityContextRepository`)에 명시적으로 저장해야 함을 확인했습니다.
+* **해결**: `HttpSessionSecurityContextRepository`를 사용하여 인증 성공 시 `saveContext` 메서드를 호출하도록 `UserController` 로직을 개선하여 세션 유지를 성공시켰습니다.
+
+---
+
+## ⚠️ Limitations
+* **API Rate Limit**: Alpha Vantage 무료 플랜 특성상 분당 5회 호출 제한이 있습니다.
+* **Data Scope**: 현재 미국 주식 데이터를 중심으로 구성되어 있으며, 향후 국내 주식 데이터를 추가할 예정입니다.
