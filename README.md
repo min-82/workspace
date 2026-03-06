@@ -1,17 +1,13 @@
 # 💹 Cyber-Finance
 > **Spring Boot 기반 실시간 주식 시세 조회 및 포트폴리오 관리 시스템**
 
-👋 Hello there!
-
-I am a student developer currently on a learning level. As I am still in the early stages of my career, I may have some mistakes or areas for improvement. Any constructive feedback or suggestions would be greatly appreciated! Thank you for looking at my project.
-
 ![Java](https://img.shields.io/badge/Java-17-orange?style=flat-square&logo=java)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen?style=flat-square&logo=springboot)
 ![Spring Security](https://img.shields.io/badge/Spring%20Security-Auth-blue?style=flat-square&logo=springsecurity)
 
-## 👋 Project Overview
-안녕하세요! 배움을 즐기는 **컴퓨터공학과 2학년** 개발자입니다. 
-`Cyber-Finance`는 외부 금융 API를 연동하여 실시간 주식 데이터를 처리하고, 사용자별 포트폴리오를 관리하는 백엔드 시스템입니다. 단순한 기능 구현을 넘어 **보안(Security)**과 **데이터 정규화**를 고려하여 설계되었습니다.
+## 👋 Hello there!
+
+I am a student developer currently on a learning level. As I am still in the early stages of my career, I may have some mistakes or areas for improvement. Any constructive feedback or suggestions would be greatly appreciated! Thank you for looking at my project.
 
 ---
 
