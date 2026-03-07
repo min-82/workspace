@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인 | Cyber Finance</title>
+    <style>
+        body { background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: sans-serif; }
+        .login-card { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 360px; text-align: center; }
+        .logo { color: #0056b3; font-size: 24px; font-weight: bold; margin-bottom: 30px; }
+        input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #004494; }
+        .links { margin-top: 20px; font-size: 13px; color: #666; }
+        .links a { color: #0056b3; text-decoration: none; margin: 0 10px; }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+    <div class="logo">💹 Cyber Finance</div>
+    <input type="text" id="username" placeholder="아이디">
+    <input type="password" id="password" placeholder="비밀번호">
+    <button onclick="handleLogin()">로그인</button>
+    
+    <div class="links">
+        <a href="/register.html">회원가입</a> | <a href="/mainIndex.html">홈으로</a>
+    </div>
+</div>
+
+<script>
+    async function handleLogin() {
+        const usernameValue = document.getElementById('username').value;
+        const passwordValue = document.getElementById('password').value;
+
+        // 1. 데이터 객체 생성
+        const loginData = {
+            username: usernameValue,
+            password: passwordValue
+        };
+
+        try {
+            // 2. 백엔드 API 호출
+            const response = await fetch('/api/users/login', {
+                method: 'POST',
+                headers: { 
+                    // 🌟 서버의 @RequestBody가 인식할 수 있도록 JSON으로 설정
+                    'Content-Type': 'application/json' 
+                },
+                // 🌟 데이터를 JSON 문자열로 변환하여 전송
+                body: JSON.stringify(loginData)
+            });
+
+            if (response.ok) {
+                const msg = await response.text();
+                if (msg.includes("완료")) {
+                    alert("로그인 성공!"); // 성공 확인을 위해 추가
+                    window.location.href = "/mainIndex.html"; // 성공 시 메인으로
+                } else {
+                    alert(msg); // "비밀번호가 틀렸습니다" 등 출력
+                }
+            } else {
+                const errorText = await response.text();
+                alert("로그인 에러: " + errorText);
+            }
+        } catch (error) {
+            console.error("Network Error:", error);
+            alert("서버와 통신할 수 없습니다.");
+        }
+    }
+</script>
+
+</body>
+</html>

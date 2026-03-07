@@ -23,6 +23,9 @@ public class StockMaster {
     private String name;
     private String category;
 
+    // 🌟 추가된 필드: 실시간 시세를 저장합니다.
+    private double livePrice; 
+
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
@@ -31,5 +34,6 @@ public class StockMaster {
         this.ticker = ticker;
         this.category = category;
         this.currency = currency;
+        this.livePrice = 0.0; // 초기값은 0.0으로 설정합니다.
     }
 }

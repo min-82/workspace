@@ -12,6 +12,9 @@ bin/
 .fuse_hidden
 HELP.md
 
+# 개인 설정 및 API 키
+data/
+
 ### Maven 래퍼 ###
 
 .mvn/wrapper/maven-wrapper.jar
@@ -26,6 +29,7 @@ application.yml
 *.key
 *.p12
 *.jks
+*.pem
 
 ### 데이터베이스 (H2) ##
 

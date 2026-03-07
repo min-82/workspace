@@ -19,13 +19,36 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // 테스트 편의를 위해 CSRF 보호 일시 비활성화
-            .headers(headers -> headers.frameOptions(frame -> frame.disable())) // H2 콘솔 접속 허용
+            .csrf(csrf -> csrf.disable())
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/api/users/register", "/api/users/login", "/h2-console/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll() // 누구나 접근 가능
-                .anyRequest().authenticated() // 그 외 모든 요청은 로그인 필요
+                .requestMatchers(
+                    "/", "/index.html", "/mainIndex.html", "/login.html", "/register.html", 
+                    "/css/**", "/js/**", "/images/**", "/favicon.ico"
+                ).permitAll()
+                
+                .requestMatchers(
+                    "/api/users/register", // 🌟 UserController와 주소가 일치하는지 확인!
+                    "/api/users/signup",   // 혹시 몰라 두 쪽 다 허용
+                    "/api/users/login", 
+                    "/api/users/me",
+                    "/api/stocks/**",      // 🌟 주식 조회 API 허용 (이게 없어서 403 떴을 것)
+                    "/h2-console/**", 
+                    "/swagger-ui/**", 
+                    "/v3/api-docs/**"
+                ).permitAll()
+                
+                .anyRequest().authenticated()
             )
-            .formLogin(login -> login.disable()) // API 방식이므로 기본 폼 로그인 비활성화
+            .logout(logout -> logout
+                .logoutUrl("/api/users/logout")
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    response.setStatus(200);
+                })
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+            )
+            .formLogin(login -> login.disable())
             .httpBasic(basic -> basic.disable());
 
         return http.build();

@@ -20,7 +20,7 @@ I am a student developer currently on a learning level. As I am still in the ear
 | **Build Tool** | Maven (./mvnw) |
 | **Database** | H2 Database (File-based Persistence) |
 | **ORM** | Spring Data JPA (Hibernate 7.x) |
-| **API Docs** | Swagger / OpenAPI 3.0 |
+| **Fronted** | Vanilla JS, HTML5, CSS3 (Smooth UI) |
 | **External API** | Alpha Vantage API, ExchangeRate-API |
 
 ---
@@ -29,17 +29,17 @@ I am a student developer currently on a learning level. As I am still in the ear
 
 ### 1. 보안 및 회원 관리 (Security & User)
 * **BCrypt 암호화**: `BCryptPasswordEncoder`를 사용하여 사용자 비밀번호를 안전하게 해싱하여 저장합니다.
-* **세션 기반 인증**: Spring Security와 `HttpSession`을 연동하여 로그인 상태를 유지하고 권한을 검증합니다.
-* **CSRF 방어 설정**: API 환경에 최적화된 보안 설정을 적용하였습니다.
+* **세션 유지 최적화**: Spring Security 6의 `SecurityContextRepository`를 명시적으로 제어하여 로그인 세션 끊김 문제를 해결했습니다.
+* **회원별 자산 관리**: 각 사용자별로 독립된 현금 잔고와 포트폴리오 데이터를 유지합니다.
 
-### 2. 주식 및 데이터 관리 (Market Data)
-* **마스터 데이터 동기화**: 서버 기동 시 `stocks.json`을 파싱하여 DB(`StockMaster`)에 자동 업데이트합니다.
-* **실시간 시세 조회**: Alpha Vantage API를 연동하여 미국 주식의 최신 가격을 가져옵니다.
-* **환율 자동 변환**: 외부 환율 API를 통해 `USD` 데이터를 실시간 `KRW` 가격으로 변환하여 제공합니다.
+### 2. 주식 거래 및 포트폴리오 (Trading & Portfolio)
+* **매수/매도 로직**: 현재 시세와 환율을 실시간으로 계산하여 잔고 부족 체크 및 보유 수량 검증 후 거래를 처리합니다.
+* **실시간 원화(KRW) 환산**: 미국 주식(USD) 자산을 현재 환율로 직시 계산하여 총 평가금액을 원화로 가시화합니다.
+* **통합 대시보드**: 예수금과 주식 평가금액을 합산한 총자산 현황을 실시간으로 제공합니다.
 
-### 3. 실무형 아키텍처 (Architecture)
-* **데이터 정규화**: 주식 정보(Master)와 사용자의 보유 정보(Portfolio)를 분리하여 데이터 무결성을 보장합니다.
-* **Swagger API 문서화**: 모든 API 엔드포인트를 시각적으로 확인하고 테스트할 수 있는 환경을 구축했습니다.
+### 3. 사용자 경험 (UX/UI)
+* **Smooth UI 인터랙션**: 상단 메뉴 클릭 시 해당 섹션으로 이동하는 스크롤 기능을 구현했습니다.
+* **반응형 데이터 바인딩**: DTO와 자바스크립트의 정교한 매핑을 통해 거래 성공 시 화면 새로고침 없이 자산 정보가 갱신됩니다.
 
 ---
 
@@ -56,11 +56,6 @@ I am a student developer currently on a learning level. As I am still in the ear
 # Database Configuration
 spring.datasource.url=jdbc:h2:file:./data/cyberfinance
 spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=
-
-# Hibernate settings
-spring.jpa.hibernate.ddl-auto=update
 
 # External API Key (예시)
 app.api.alpha-vantage.key=YOUR_API_KEY_HERE
@@ -78,30 +73,31 @@ app.api.alpha-vantage.key=YOUR_API_KEY_HERE
 src/main/java/com/example/demo/
 ├── config/         # Security, Swagger 관련 설정 클래스
 ├── controller/     # API 엔드포인트 정의 (Stock, User)
-├── service/        # 비즈니스 로직 및 외부 API 연동
-├── domain/         # Entity 클래스 및 Repository 인터페이스
-└── dto/            # 데이터 전송 객체 (Request/Response)
+├── service/        # 비즈니스 로직 (외부 API 연동, 환율 계산 등)
+├── domain/         # Entity (User, StockMaster, Portfolio, Order)
+├── dto/            # 데이터 전송 객체 (PortfolioResponseDto, OrderRequestDto 등)
+└── repository/     # JPA 데이터 접근 계층
 ```
 
 ---
 
-## 🔍 API Documentation (Swagger)
-서버 실행 후 아래 주소에서 API를 직접 테스트해 볼 수 있습니다.
-* **Swagger UI**: `http://localhost:8080/swagger-ui/index.html`
-* **H2 Console**: `http://localhost:8080/h2-console`
-  * JDBC URL: `jdbc:h2:file:./data/cyberfinance`
-  * User Name: `sa` / Password: (없음)
+## 🛠 More Things to Do
+
+* **국내 주식 데이터 추가**
+* **거래 수수료 및 세금 로직 추가**
+* **차트 기능 추가**
+* **배포**
 
 ---
 
-## 🛠 Troubleshooting: Spring Security 6 Session Issue
-프로젝트 개발 중, 로그인을 성공했음에도 불구하고 다음 API 요청 시 `403 Forbidden` 에러가 발생하는 이슈를 겪었습니다.
+## 2026-03-01 ~ 2026-03-07 (Project Reflection)
 
-* **원인**: Spring Security 6(Spring Boot 3)부터는 수동 로그인 시 `SecurityContextHolder`에 인증 정보를 넣는 것만으로는 부족하며, 이를 세션 저장소(`SecurityContextRepository`)에 명시적으로 저장해야 함을 확인했습니다.
-* **해결**: `HttpSessionSecurityContextRepository`를 사용하여 인증 성공 시 `saveContext` 메서드를 호출하도록 `UserController` 로직을 개선하여 세션 유지를 성공시켰습니다.
+Although it was a short period of just one week, this was the very first project of my life. Since I worked on it during the first week of the semester, I couldn't dedicate entire days to it, but I spent almost every spare moment focused on this project. As it was my first time, I feel some disappointment with the results due to my currently shallow knowledge in this field.
 
----
+My motivation for starting this project was to test the limits of my capabilities. Inspired by the remarkable advancements in AI, I wanted to see how far I could go in web development as a CS major who still lacks practical project experience. Reflecting on the process, there were times when using AI actually consumed more time; however, I concluded that I could never have completed a project of this scale without its assistance. A significant portion of time was wasted because I relied on chat-based AI rather than AI agents, which led to a lack of consistency across the program. I initially avoided agents out of fear that I wouldn't be writing any code myself, but in hindsight, that decision prevented me from maximizing development efficiency.
 
-## ⚠️ Limitations
-* **API Rate Limit**: Alpha Vantage 무료 플랜 특성상 분당 5회 호출 제한이 있습니다.
-* **Data Scope**: 현재 미국 주식 데이터를 중심으로 구성되어 있으며, 향후 국내 주식 데이터를 추가할 예정입니다.
+Because of the high reliance on AI, I don't feel that my raw coding skills improved significantly through this project. While I did check my understanding by taking quizzes and descriptive evaluations from the AI, I still feel a lack of deep understanding regarding the granular details beyond the core features and architecture.
+
+Looking back, I also feel that I might have chosen an overly ambitious topic for a first project. Since security is paramount for financial websites, I spent a vast amount of time researching related materials, which made the overall functionality of the code feel quite heavy. While security is an essential element of backend development, I wonder if a topic that allowed me to focus more on handling diverse features and data would have been more appropriate for a first attempt.
+
+For these reasons, I am bringing this project to a close. For my next project, I want to select a more suitable topic and proceed within a properly established integrated development environment. As I am still in the learning stage, there may be many shortcomings. Thank you for taking the time to read this. ^^

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Finance | 내 자산 관리</title>
+    <style>
+        /* 기본 스타일 및 삼성증권 스타일 레이아웃 */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', sans-serif; }
+        body { background-color: #f8f9fa; color: #333; }
+        a { text-decoration: none; color: inherit; }
+
+        header { background-color: #fff; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 1000; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .logo { font-size: 24px; font-weight: bold; color: #0056b3; letter-spacing: -1px; }
+        .menu-links a { margin-right: 30px; font-weight: 500; color: #555; cursor: pointer; transition: 0.3s; }
+        .menu-links a:hover { color: #0056b3; }
+        
+        .auth-links a { padding: 8px 16px; border-radius: 4px; font-size: 14px; margin-left: 10px; }
+        .btn-login { background-color: #0056b3; color: #fff; }
+        .btn-join { border: 1px solid #0056b3; color: #0056b3; }
+
+        .hero { background: linear-gradient(135deg, #0056b3 0%, #002d5d 100%); color: #fff; padding: 40px 20px; text-align: center; }
+        .asset-summary { display: flex; justify-content: center; gap: 50px; margin-top: 20px; }
+        .asset-item { text-align: center; }
+        .asset-label { font-size: 14px; opacity: 0.8; }
+        .asset-value { font-size: 24px; font-weight: bold; margin-top: 5px; }
+
+        .content { max-width: 1200px; margin: 40px auto; padding: 0 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .card { background: #fff; padding: 25px; border-radius: 12px; border: 1px solid #e1e4e8; margin-bottom: 20px; }
+        .card h2 { font-size: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 13px; color: #888; padding-bottom: 10px; border-bottom: 1px solid #f0f0f0; }
+        td { padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        
+        .btn-buy { padding: 5px 10px; background: #d60000; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-sell { padding: 5px 10px; background: #0056b3; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        
+        footer { text-align: center; padding: 40px; color: #999; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <div class="logo">💹 Cyber Finance</div>
+        <nav class="menu-links">
+            <a onclick="scrollToSection('market-prices')">주식정보</a>
+            <a onclick="scrollToSection('my-portfolio')">내 자산</a>
+        </nav>
+        <div class="auth-links" id="auth-zone">
+            <a href="/login.html" class="btn-login">로그인</a>
+            <a href="/register.html" class="btn-join">회원가입</a>
+        </div>
+    </div>
+</header>
+
+<section class="hero">
+    <h1>더 스마트한 자산관리</h1>
+    <div class="asset-summary" id="asset-display" style="display: none;">
+        <div class="asset-item">
+            <div class="asset-label">예수금(원화)</div>
+            <div class="asset-value" id="user-balance">₩0</div>
+        </div>
+        <div class="asset-item">
+            <div class="asset-label">주식 평가금액</div>
+            <div class="asset-value" id="total-stock-value">₩0</div>
+        </div>
+    </div>
+</section>
+
+<div class="content">
+    <div class="main-column">
+        <div class="card" id="market-prices">
+            <h2>실시간 마켓 시세 <button onclick="fetchStocks()" style="font-size: 12px; cursor:pointer;">새로고침</button></h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>종목명</th>
+                        <th>현재가</th>
+                        <th>통화</th>
+                        <th>거래</th>
+                    </tr>
+                </thead>
+                <tbody id="stock-list">
+                    <tr><td colspan="4" style="text-align:center; padding:20px;">데이터를 불러오는 중...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card" id="my-portfolio" style="display: none;">
+            <h2>내 보유 주식</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>종목명</th>
+                        <th>보유수량</th>
+                        <th>평가금액(KRW)</th>
+                        <th>거래</th>
+                    </tr>
+                </thead>
+                <tbody id="portfolio-list"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="side-column">
+        <div class="card">
+            <h3>빠른 메뉴</h3>
+            <div style="margin-top:15px;">
+                <p style="font-size:13px; color:#666;">환율 정보 (실시간)</p>
+                <h4 id="current-exchange-rate" style="color:#0056b3;">조회 중...</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2026 Cyber Finance. 본 서비스는 학습용 프로젝트입니다.
+</footer>
+
+<script>
+    // 1. 로그인 상태 확인 및 초기화
+    async function checkLoginStatus() {
+        try {
+            const response = await fetch('/api/users/me');
+            const username = await response.text();
+
+            if (username !== "guest") {
+                document.getElementById('auth-zone').innerHTML = `
+                    <span style="margin-right:15px; font-weight:bold;">👤 ${username}님 환영합니다!</span>
+                    <a href="javascript:void(0)" onclick="handleLogout()" class="btn-join">로그아웃</a>
+                `;
+                document.getElementById('asset-display').style.display = 'flex';
+                document.getElementById('my-portfolio').style.display = 'block';
+                
+                fetchPortfolio(); 
+                fetchStocks(); 
+                fetchExchangeRate(); 
+            }
+        } catch (e) { console.error("인증 체크 실패", e); }
+    }
+
+    // 2. 실시간 주식 목록 로드
+    async function fetchStocks() {
+        try {
+            const response = await fetch('/api/stocks');
+            const stocks = await response.json();
+            const listBody = document.getElementById('stock-list');
+            listBody.innerHTML = '';
+
+            stocks.forEach(s => {
+                const row = `<tr>
+                    <td class="stock-symbol">${s.name} <small>${s.ticker}</small></td>
+                    <td class="stock-price">${Math.round(s.livePrice).toLocaleString()}</td>
+                    <td>${s.currency}</td>
+                    <td><button class="btn-buy" onclick="handleTrade('buy', '${s.ticker}')">매수</button></td>
+                </tr>`;
+                listBody.innerHTML += row;
+            });
+        } catch (e) { console.error("시세 로드 실패", e); }
+    }
+
+    // 3. 내 포트폴리오 데이터 매핑 (DTO 필드명 일치)
+    async function fetchPortfolio() {
+        try {
+            const response = await fetch('/api/portfolio');
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+
+            // 🌟 백엔드 DTO 필드명 매핑: cashBalance, totalStockValue
+            const cash = data.cashBalance || 0;
+            const stockVal = data.totalStockValue || 0;
+
+            document.getElementById('user-balance').innerText = `₩${Math.round(cash).toLocaleString()}`;
+            document.getElementById('total-stock-value').innerText = `₩${Math.round(stockVal).toLocaleString()}`;
+
+            const listBody = document.getElementById('portfolio-list');
+            listBody.innerHTML = '';
+
+            // 🌟 백엔드 DTO 필드명 매핑: holdings
+            if (data.holdings && data.holdings.length > 0) {
+                data.holdings.forEach(s => {
+                    const row = `<tr>
+                        <td>${s.stockName}</td>
+                        <td>${s.quantity}주</td>
+                        <td>₩${Math.round(s.evaluationAmount).toLocaleString()}</td>
+                        <td><button class="btn-sell" onclick="handleTrade('sell', '${s.ticker}')">매도</button></td>
+                    </tr>`;
+                    listBody.innerHTML += row;
+                });
+            } else {
+                listBody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:30px; color:#999;">보유 주식이 없습니다.</td></tr>';
+            }
+        } catch (e) { console.error("포트폴리오 로드 실패", e); }
+    }
+
+    // 4. 거래 처리 (매수/매도)
+    async function handleTrade(type, ticker) {
+        const action = type === 'buy' ? '매수' : '매도';
+        const qtyStr = prompt(`${ticker} 종목을 몇 주 ${action}하시겠습니까?`);
+        if (!qtyStr || isNaN(qtyStr) || qtyStr <= 0) return;
+
+        const url = type === 'buy' ? '/api/orders/buy' : '/api/orders/sell';
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticker: ticker, quantity: parseInt(qtyStr) })
+            });
+            const result = await response.text();
+            alert(result);
+            if (response.ok) fetchPortfolio(); 
+        } catch (e) { alert("거래 중 오류 발생"); }
+    }
+
+    // 5. 환율 및 유틸리티 기능
+    async function fetchExchangeRate() {
+        try {
+            const response = await fetch('/api/stocks/exchange-rate');
+            const rate = await response.text();
+            document.getElementById('current-exchange-rate').innerText = `1 USD = ${parseFloat(rate).toLocaleString()} KRW`;
+        } catch (e) { document.getElementById('current-exchange-rate').innerText = "환율 정보 조회 실패"; }
+    }
+
+    // 🌟 스크롤 이동 함수
+    function scrollToSection(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    async function handleLogout() {
+        await fetch('/api/users/logout', { method: 'POST' });
+        location.reload();
+    }
+
+    window.onload = checkLoginStatus;
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.StockMaster;
-import com.example.demo.domain.StockMasterRepository;
+import com.example.demo.repository.StockMasterRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

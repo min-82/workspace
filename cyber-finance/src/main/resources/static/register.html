@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 | Cyber Finance</title>
+    <style>
+        body { background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Pretendard', sans-serif; }
+        .register-card { background: #fff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); width: 400px; text-align: center; }
+        .logo { color: #0056b3; font-size: 24px; font-weight: bold; margin-bottom: 30px; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        label { display: block; font-size: 13px; color: #666; margin-bottom: 5px; margin-left: 2px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 15px; }
+        input:focus { outline: none; border-color: #0056b3; }
+        .btn-register { width: 100%; padding: 14px; background-color: #0056b3; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .btn-register:hover { background-color: #004494; }
+        .links { margin-top: 25px; font-size: 13px; color: #666; }
+        .links a { color: #0056b3; text-decoration: none; margin: 0 10px; }
+        .error-msg { color: #d60000; font-size: 12px; margin-top: 5px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="register-card">
+    <div class="logo">💹 Cyber Finance</div>
+    <h3 style="margin-bottom: 25px; color: #333;">계정 만들기</h3>
+
+    <div class="form-group">
+        <label>아이디</label>
+        <input type="text" id="username" placeholder="사용할 아이디를 입력하세요">
+    </div>
+
+    <div class="form-group">
+        <label>비밀번호</label>
+        <input type="password" id="password" placeholder="비밀번호 (8자 이상 권장)">
+    </div>
+
+    <div class="form-group">
+        <label>비밀번호 확인</label>
+        <input type="password" id="confirmPassword" placeholder="비밀번호를 한 번 더 입력하세요">
+        <div id="passwordError" class="error-msg">비밀번호가 일치하지 않습니다.</div>
+    </div>
+
+    <button class="btn-register" onclick="handleRegister()">회원가입 완료</button>
+    
+    <div class="links">
+        이미 계정이 있으신가요? <a href="/login.html">로그인하기</a>
+    </div>
+</div>
+
+<script>
+    async function handleRegister() {
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorDiv = document.getElementById('passwordError');
+
+        // 1. 기본 유효성 검사
+        if (password !== confirmPassword) {
+            errorDiv.style.display = 'block';
+            return;
+        } else {
+            errorDiv.style.display = 'none';
+        }
+
+        if (!username || !password) {
+            alert("아이디와 비밀번호를 모두 입력해주세요.");
+            return;
+        }
+
+        // 2. 백엔드 API 호출 (실제 연동 코드)
+        try {
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+
+            if (response.ok) {
+                alert("회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.");
+                window.location.href = "/login.html";
+            } else {
+                const errorData = await response.text();
+                alert("회원가입 실패: " + errorData);
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("서버와 통신 중 에러가 발생했습니다.");
+        }
+    }
+</script>
+
+</body>
+</html>
